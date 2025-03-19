@@ -127,7 +127,9 @@ def Driver(
     wire=None,  # Shortcut / Duplicate of "use_wire".
     pls=None,  # Shortcut / Duplicate of "page_load_strategy".
     downloads_path=None,  # Set the downloads path for the web browser.
+    window_size=None,  # Set the initial window size for the web browser.
 ):
+    from seleniumbase.config import settings
     from seleniumbase.fixtures import constants
     from seleniumbase.fixtures import shared_utils
 
@@ -289,6 +291,47 @@ def Driver(
                 d_f = d_f[1:-1]
             elif c_a.startswith("'") and d_f.endswith("'"):
                 d_f = d_f[1:-1]
+
+    # === Copied from master branch ===
+    w_s = window_size
+    if w_s is None and "--window-size" in arg_join:
+        count = 0
+        for arg in sys_argv:
+            if arg.startswith("--window-size="):
+                w_s = arg.split("--window-size=")[1]
+                break
+            elif arg == "--window-size" and len(sys_argv) > count + 1:
+                w_s = sys_argv[count + 1]
+                if w_s.startswith("-"):
+                    w_s = None
+                break
+            count += 1
+    window_size = w_s
+    if window_size:
+        if window_size.count(",") != 1:
+            message = (
+                '\n\n  window_size expects a "width,height" string!'
+                '\n  (Your input was: "%s")\n' % window_size
+            )
+            raise Exception(message)
+        window_size = window_size.replace(" ", "")
+        width = None
+        height = None
+        try:
+            width = int(window_size.split(",")[0])
+            height = int(window_size.split(",")[1])
+        except Exception:
+            message = (
+                '\n\n  Expecting integer values for "width,height"!'
+                '\n  (window_size input was: "%s")\n' % window_size
+            )
+            raise Exception(message)
+        settings.CHROME_START_WIDTH = width
+        settings.CHROME_START_HEIGHT = height
+        settings.HEADLESS_START_WIDTH = width
+        settings.HEADLESS_START_HEIGHT = height
+    # === End of copied code ===
+
     disable_features = d_f
     user_agent = agent
     recorder_mode = False
