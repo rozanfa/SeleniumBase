@@ -1377,6 +1377,7 @@ def get_driver(
     device_height=None,
     device_pixel_ratio=None,
     browser=None,  # A duplicate of browser_name to avoid confusion
+    downloads_path=None,
 ):
     if not browser_name:
         if browser:
@@ -1644,6 +1645,7 @@ def get_driver(
             device_width,
             device_height,
             device_pixel_ratio,
+            downloads_path
         )
 
 
@@ -2118,10 +2120,12 @@ def get_local_driver(
     device_width,
     device_height,
     device_pixel_ratio,
+    downloads_path
 ):
     """Spins up a new web browser and returns the driver.
     Can also be used to spin up additional browsers for the same test."""
-    downloads_path = DOWNLOADS_FOLDER
+    if not downloads_path:
+        downloads_path = DOWNLOADS_FOLDER
     b_path = binary_location
     if use_wire:
         driver_fixing_lock = fasteners.InterProcessLock(

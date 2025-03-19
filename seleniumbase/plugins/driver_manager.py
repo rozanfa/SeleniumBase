@@ -126,6 +126,7 @@ def Driver(
     log_cdp=None,  # Shortcut / Duplicate of "log_cdp_events".
     wire=None,  # Shortcut / Duplicate of "use_wire".
     pls=None,  # Shortcut / Duplicate of "page_load_strategy".
+    downloads_path=None,  # Set the downloads path for the web browser.
 ):
     from seleniumbase.fixtures import constants
     from seleniumbase.fixtures import shared_utils
@@ -542,5 +543,6 @@ def Driver(
         device_height=d_height,
         device_pixel_ratio=d_p_r,
         browser=browser_name,
+        downloads_path=downloads_path,
     )
     return driver
